@@ -14,7 +14,7 @@ export const Cart = () => {
 
   const handleCheckout = () => {
     if (!user) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 

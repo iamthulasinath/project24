@@ -85,6 +85,14 @@ export const Orders = () => {
                   <span className="order-total">₹{order.total}</span>
                 </div>
 
+                {/* ✅ Display Scheduled Time */}
+                <div className="scheduled-time">
+                  <strong>Scheduled for:</strong>{" "}
+                  {order.scheduledFor
+                    ? new Date(order.scheduledFor).toLocaleString()
+                    : "Not Scheduled"}
+                </div>
+
                 <div className="order-items">
                   {order.items && order.items.length > 0 ? (
                     order.items.map((item, idx) => (

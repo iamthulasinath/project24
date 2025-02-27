@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Search as SearchIcon, Plus, AlertCircle } from "lucide-react";
+import {
+  Search as SearchIcon,
+  Plus,
+  AlertCircle,
+  ShoppingCart,
+} from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import "./Search.css";
 import { useStore } from "../store/useStore";
+import { Link } from "react-router-dom";
 
 export const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [itemsData, setItemsData] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
 
   const { state, dispatch } = useStore();
+  const cartItemCount = state.cart.length;
 
   // Fetch items from API
   useEffect(() => {
@@ -20,7 +28,6 @@ export const Search = () => {
         return response.json();
       })
       .then((data) => {
-        //console.log("Items fetched:", data);
         setItemsData(data);
       })
       .catch((err) => {
@@ -30,6 +37,8 @@ export const Search = () => {
 
   const addToCart = (item) => {
     dispatch({ type: "ADD_TO_CART", payload: item });
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
   };
 
   // Filter items based on search query
@@ -89,6 +98,21 @@ export const Search = () => {
               </p>
             </div>
           )}
+        </div>
+
+        {/* Cart Notification */}
+        <div className={`cart-notification ${showNotification ? "show" : ""}`}>
+          <div className="cart-notification-content">
+            <div className="cart-info">
+              <ShoppingCart className="cart-icon" />
+              <span className="cart-count">
+                {cartItemCount} item(s) in cart
+              </span>
+            </div>
+            <Link to="/cart" className="view-cart-button">
+              View Cart
+            </Link>
+          </div>
         </div>
       </div>
     </>

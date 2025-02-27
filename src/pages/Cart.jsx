@@ -108,7 +108,7 @@ export const Cart = () => {
                 </div>
                 <button
                   onClick={() =>
-                    dispatch({ type: "REMOVE_FROM_CART", payload: item.id })
+                    dispatch({ type: "REMOVE_FROM_CART", payload: item._id })
                   }
                   className="remove-button"
                 >

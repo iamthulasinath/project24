@@ -37,9 +37,10 @@ const storeReducer = (state, action) => {
       };
 
     case "REMOVE_FROM_CART":
+      //console.log(action.payload);
       return {
         ...state,
-        cart: state.cart.filter((item) => item.id !== action.payload),
+        cart: state.cart.filter((item) => item._id !== action.payload),
       };
     case "UPDATE_QUANTITY":
       return {

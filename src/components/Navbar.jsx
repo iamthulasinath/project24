@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   ShoppingCart,
   User,
-  Home,
   Search,
   Clock,
   Menu,
@@ -14,8 +13,11 @@ import { useStore } from "../store/useStore";
 import "./Navbar.css";
 
 export const Navbar = () => {
-  const { cart, user } = useStore();
-  const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const { state } = useStore();
+  const cartItemCount = state.cart.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -56,9 +58,12 @@ export const Navbar = () => {
                 <Clock className="nav-icon" />
                 <span>Orders</span>
               </Link>
-              <Link to={user ? "/profile" : "/login"} className="nav-link">
+              <Link
+                to={state.user ? "/profile" : "/login"}
+                className="nav-link"
+              >
                 <User className="nav-icon" />
-                <span>{user ? "Profile" : "Login"}</span>
+                <span>{state.user ? "Profile" : "Login"}</span>
               </Link>
             </div>
           </div>

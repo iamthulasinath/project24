@@ -6,10 +6,10 @@ import "./Profile.css";
 
 export const Profile = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useStore();
+  const { state, dispatch } = useStore();
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch({ type: "LOGOUT" });
     navigate("/");
   };
 
@@ -23,12 +23,12 @@ export const Profile = () => {
           <div className="profile-info">
             <div className="info-group">
               <label>Name</label>
-              <p>{user.name}</p>
+              <p>{state.user?.name}</p>
             </div>
 
             <div className="info-group">
               <label>Email</label>
-              <p>{user.email}</p>
+              <p>{state.user?.email}</p>
             </div>
           </div>
 

@@ -3,43 +3,8 @@ import { useStore } from "../store/useStore";
 import { Navbar } from "../components/Navbar";
 import "./Orders.css";
 
-const mockOrders = [
-  {
-    id: "1",
-    date: "2024-03-20",
-    status: "completed",
-    items: [
-      {
-        id: "1",
-        name: "Margherita Pizza",
-        quantity: 2,
-        price: 12.99,
-        image:
-          "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&q=80&w=600",
-      },
-    ],
-    total: 25.98,
-  },
-  {
-    id: "2",
-    date: "2024-03-19",
-    status: "completed",
-    items: [
-      {
-        id: "3",
-        name: "Chicken Burger",
-        quantity: 1,
-        price: 10.99,
-        image:
-          "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=600",
-      },
-    ],
-    total: 10.99,
-  },
-];
-
 export const Orders = () => {
-  const { user } = useStore();
+  const { state } = useStore();
 
   return (
     <>
@@ -48,38 +13,103 @@ export const Orders = () => {
         <h1>Order History</h1>
 
         <div className="orders-list">
-          {mockOrders.map((order) => (
-            <div key={order.id} className="order-card">
-              <div className="order-header">
-                <div className="order-info">
-                  <span className="order-date">
-                    {new Date(order.date).toLocaleDateString()}
-                  </span>
-                  <span className={`order-status ${order.status}`}>
-                    {order.status}
-                  </span>
-                </div>
-                <span className="order-total">₹{order.total.toFixed(2)}</span>
-              </div>
-
-              <div className="order-items">
-                {order.items.map((item) => (
-                  <div key={item.id} className="order-item">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="order-item-image"
-                    />
-                    <div className="order-item-details">
-                      <h3>{item.name}</h3>
-                      <p>Quantity: {item.quantity}</p>
-                      <p>₹{item.price.toFixed(2)} each</p>
-                    </div>
+          {state.orders.length === 0 ? (
+            <p>No orders available.</p>
+          ) : (
+            state.orders.map((order, index) => (
+              <div key={index} className="order-card">
+                <div className="order-header">
+                  <div className="order-info">
+                    <span className="order-date">
+                      {order.date
+                        ? new Date(order.date).toLocaleDateString()
+                        : "N/A"}
+                    </span>
+                    <span
+                      className={`order-status ${order.status || "pending"}`}
+                    >
+                      {order.status || "Pending"}
+                    </span>
                   </div>
-                ))}
+                  <span className="order-total">₹{order.total}</span>
+                </div>
+
+                <div className="order-items">
+                  {order.items && order.items.length > 0 ? (
+                    order.items.map((item, idx) => (
+                      <div key={idx} className="order-item">
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="order-item-image"
+                          />
+                        )}
+                        <div className="order-item-details">
+                          <h3>{item.name}</h3>
+                          <p>Quantity: {item.quantity}</p>
+                          <p>₹{item.price} each</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No items in this order.</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
+        </div>
+
+        <h1>Scheduled Orders</h1>
+
+        <div className="orders-list">
+          {state.scheduledOrders.length === 0 ? (
+            <p>No scheduled orders available.</p>
+          ) : (
+            state.scheduledOrders.map((order, index) => (
+              <div key={index} className="order-card">
+                <div className="order-header">
+                  <div className="order-info">
+                    <span className="order-date">
+                      {order.date
+                        ? new Date(order.date).toLocaleDateString()
+                        : "N/A"}
+                    </span>
+                    <span
+                      className={`order-status ${order.status || "pending"}`}
+                    >
+                      {order.status || "Pending"}
+                    </span>
+                  </div>
+                  <span className="order-total">₹{order.total}</span>
+                </div>
+
+                <div className="order-items">
+                  {order.items && order.items.length > 0 ? (
+                    order.items.map((item, idx) => (
+                      <div key={idx} className="order-item">
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="order-item-image"
+                          />
+                        )}
+                        <div className="order-item-details">
+                          <h3>{item.name}</h3>
+                          <p>Quantity: {item.quantity}</p>
+                          <p>₹{item.price} each</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No items in this scheduled order.</p>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </>

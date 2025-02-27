@@ -6,7 +6,7 @@ import "./Login.css";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useStore();
+  const { dispatch } = useStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,18 +15,15 @@ export const Login = () => {
     e.preventDefault();
     setError("");
 
-    // Simple validation
     if (!email || !password) {
       setError("Please fill in all fields");
       return;
     }
 
-    // Mock login - in a real app, this would make an API call
     if (email === "user@example.com" && password === "password") {
-      setUser({
-        id: "1",
-        name: "John Doe",
-        email: email,
+      dispatch({
+        type: "SET_USER",
+        payload: { id: "1", name: "John Doe", email: email },
       });
       navigate("/home");
     } else {
@@ -37,10 +34,8 @@ export const Login = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h1>Welcome Back</h1>
+        <h1>Welcome Back to mechloDine</h1>
         <p className="login-subtitle">Sign in to your account</p>
-
-        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -64,19 +59,12 @@ export const Login = () => {
               placeholder="Enter your password"
             />
           </div>
+          {error && <div className="error-message">{error}</div>}
 
           <button type="submit" className="login-button">
             Sign In
           </button>
         </form>
-
-        <p className="demo-credentials">
-          Demo credentials:
-          <br />
-          Email: user@example.com
-          <br />
-          Password: password
-        </p>
       </div>
     </div>
   );

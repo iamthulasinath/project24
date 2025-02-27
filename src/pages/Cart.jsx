@@ -1,29 +1,50 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { Trash2, ArrowLeft } from "lucide-react";
 import { useStore } from "../store/useStore";
-
+import DatePicker from "react-datepicker"; // Import date picker
+import "react-datepicker/dist/react-datepicker.css"; // Import styles
 import "./Cart.css";
 
 export const Cart = () => {
   const navigate = useNavigate();
-  const { cart, removeFromCart, updateQuantity, clearCart, user } = useStore();
+  const { state, dispatch } = useStore();
+  const [scheduleDate, setScheduleDate] = useState(null); // State to store scheduled time
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = state.cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   const handleCheckout = () => {
-    if (!user) {
-      navigate("/");
+    if (state.cart.length === 0) {
+      alert("Your cart is empty! Add some items before checking out.");
       return;
     }
 
-    // Process order
-    clearCart();
+    const orderData = {
+      id: Date.now(), // Unique order ID
+      items: state.cart,
+      total,
+      scheduledFor: scheduleDate ? scheduleDate.toISOString() : null, // Store date in ISO format
+      date: new Date().toISOString(),
+      status: "Pending",
+    };
+
+    if (scheduleDate) {
+      dispatch({ type: "ADD_SCHEDULED_ORDER", payload: orderData });
+      alert("Your order has been scheduled!");
+    } else {
+      dispatch({ type: "ADD_ORDER", payload: orderData });
+      alert("Order placed successfully!");
+    }
+
+    dispatch({ type: "CLEAR_CART" });
     navigate("/orders");
   };
 
-  if (cart.length === 0) {
+  if (state.cart.length === 0) {
     return (
       <>
         <Navbar />
@@ -45,24 +66,28 @@ export const Cart = () => {
       <div className="cart-page">
         <h1>Your Cart</h1>
         <div className="cart-items">
-          {cart.map((item) => (
+          {state.cart.map((item) => (
             <div key={item.id} className="cart-item">
               <img
                 src={item.image}
                 alt={item.name}
                 className="cart-item-image"
               />
-
               <div className="cart-item-details">
-                <h3>{item.name}</h3>
-                <p className="cart-item-price">${item.price}</p>
+                <h3 className="cart-item-name">{item.name}</h3>
+                <p className="cart-item-price">₹{item.price}</p>
               </div>
-
               <div className="cart-item-actions">
                 <div className="quantity-controls">
                   <button
                     onClick={() =>
-                      updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                      dispatch({
+                        type: "UPDATE_QUANTITY",
+                        payload: {
+                          id: item.id,
+                          quantity: Math.max(1, item.quantity - 1),
+                        },
+                      })
                     }
                     className="quantity-button"
                   >
@@ -70,15 +95,21 @@ export const Cart = () => {
                   </button>
                   <span className="quantity">{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() =>
+                      dispatch({
+                        type: "UPDATE_QUANTITY",
+                        payload: { id: item.id, quantity: item.quantity + 1 },
+                      })
+                    }
                     className="quantity-button"
                   >
                     +
                   </button>
                 </div>
-
                 <button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() =>
+                    dispatch({ type: "REMOVE_FROM_CART", payload: item.id })
+                  }
                   className="remove-button"
                 >
                   <Trash2 />
@@ -87,15 +118,23 @@ export const Cart = () => {
             </div>
           ))}
         </div>
-
         <div className="cart-summary">
           <div className="cart-total">
             <span>Total:</span>
             <span>₹{total.toFixed(2)}</span>
           </div>
-
+          <div className="schedule-order">
+            <label>Schedule Order (optional):</label>
+            <DatePicker
+              selected={scheduleDate}
+              onChange={(date) => setScheduleDate(date)}
+              showTimeSelect
+              dateFormat="Pp"
+              placeholderText="Select date & time"
+            />
+          </div>
           <button onClick={handleCheckout} className="checkout-button">
-            Proceed to Checkout
+            {scheduleDate ? "Schedule Order" : "Proceed to Checkout"}
           </button>
         </div>
       </div>

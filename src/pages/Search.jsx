@@ -12,7 +12,7 @@ export const Search = () => {
 
   // Fetch items from API
   useEffect(() => {
-    fetch("http://localhost:3001/getitems")
+    fetch("https://two4backend-gywx.onrender.com/getitems")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch items");
